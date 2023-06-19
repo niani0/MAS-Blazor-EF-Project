@@ -1,0 +1,51 @@
+﻿@page "/"
+<PageTitle>Index</PageTitle>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+<style>
+    .tile {
+        display: inline-block;
+        width: 200px;
+        height: 200px;
+        margin: 10px;
+        text-align: center;
+        cursor: pointer;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+        .tile:hover {
+            background-color: #f0f0f0;
+        }
+
+    .tile-icon {
+        font-size: 50px;
+        margin-top: 30px;
+    }
+
+    .tile-title {
+        margin-top: 20px;
+        font-weight: bold;
+    }
+</style>
+
+<h1>Tartak Gruszka</h1>
+
+<div class="tile" onclick="location.href='/groupList'">
+    <div class="tile-icon">
+        <i class="fas fa-users"></i>
+    </div>
+    <div class="tile-title">
+        Give task to group  
+    </div>
+</div>
+
+<div class="tile" onclick="location.href='/'">
+    <div class="tile-icon">
+        <i class="fas fa-warehouse"></i> 
+    </div>
+    <div class="tile-title">
+        Manage Storage
+    </div>
+</div>
