@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\Pages",
+    "\\Services"
   ],
-  "SelectedNode": "\\C:\\Users\\Franek\\Desktop\\blazor-19c",
+  "SelectedNode": "\\wwwroot",
   "PreviewInSolutionExplorer": false
 }

@@ -22,7 +22,6 @@ C:\Users\Franek\Desktop\blazor-19c\obj\Debug\net6.0\staticwebassets.pack.json
 C:\Users\Franek\Desktop\blazor-19c\obj\Debug\net6.0\staticwebassets.build.json
 C:\Users\Franek\Desktop\blazor-19c\obj\Debug\net6.0\staticwebassets.development.json
 C:\Users\Franek\Desktop\blazor-19c\obj\Debug\net6.0\scopedcss\Shared\MainLayout.razor.rz.scp.css
-C:\Users\Franek\Desktop\blazor-19c\obj\Debug\net6.0\scopedcss\Shared\NavMenu.razor.rz.scp.css
 C:\Users\Franek\Desktop\blazor-19c\obj\Debug\net6.0\scopedcss\bundle\blazor-19c.styles.css
 C:\Users\Franek\Desktop\blazor-19c\obj\Debug\net6.0\scopedcss\projectbundle\blazor-19c.bundle.scp.css
 C:\Users\Franek\Desktop\blazor-19c\obj\Debug\net6.0\blazor-19c.dll
@@ -99,3 +98,10 @@ C:\Users\Franek\Desktop\blazor-19c\bin\Debug\net6.0\runtimes\win-x64\native\gssa
 C:\Users\Franek\Desktop\blazor-19c\bin\Debug\net6.0\runtimes\win-x64\native\k5sprt64.dll
 C:\Users\Franek\Desktop\blazor-19c\bin\Debug\net6.0\runtimes\win-x64\native\krb5_64.dll
 C:\Users\Franek\Desktop\blazor-19c\bin\Debug\net6.0\runtimes\win-x64\native\krbcc64.dll
+C:\Users\Franek\Desktop\blazor-19c\bin\Debug\net6.0\Microsoft.AspNetCore.Authorization.dll
+C:\Users\Franek\Desktop\blazor-19c\bin\Debug\net6.0\Microsoft.AspNetCore.Components.dll
+C:\Users\Franek\Desktop\blazor-19c\bin\Debug\net6.0\Microsoft.AspNetCore.Components.Forms.dll
+C:\Users\Franek\Desktop\blazor-19c\bin\Debug\net6.0\Microsoft.AspNetCore.Components.Web.dll
+C:\Users\Franek\Desktop\blazor-19c\bin\Debug\net6.0\Microsoft.AspNetCore.Metadata.dll
+C:\Users\Franek\Desktop\blazor-19c\bin\Debug\net6.0\Microsoft.JSInterop.dll
+C:\Users\Franek\Desktop\blazor-19c\bin\Debug\net6.0\MudBlazor.dll

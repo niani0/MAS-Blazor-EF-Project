@@ -2,6 +2,7 @@ using blazor_19c.Data.Models;
 using blazor_19c.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.TryAddScoped<IWorkerService, WorkerService>();
 builder.Services.TryAddScoped<ITaskService, TaskService>();
 builder.Services.TryAddScoped<IGroupService, GroupService>();
+builder.Services.AddMudServices();
 
 var app = builder.Build();
 

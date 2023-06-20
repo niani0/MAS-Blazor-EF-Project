@@ -1,33 +1,37 @@
 @page "/taskList/{GroupId}"
 @inject ITaskService TaskService
+@inject IGroupService GroupService
+@inject IDialogService DialogService
 
-<h3>List of Tasks</h3>
+<PageTitle>Tasks</PageTitle>
 
 @if (tasks != null)
 {
+    <h3>List Of Avaible Tasks For Team With Specialization: @workersGroup.Specialization</h3>
     <table class="table">
         <thead>
             <tr>
                 <th>State</th>
                 <th>Creation Date</th>
-                <th>Groups</th/>    
+                <th>Specializations Of Groups Working On The Task</th>
                 <th>Due Date</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var task in tasks)
             {
-                <tr>
+                <tr @onclick="() => SelectTask(task)" class="@GetRowClass(task)" style="@GetRowStyle(task.Id)" @onmouseover="() => SetHoveredRow(task.Id, true)" @onmouseout="() => SetHoveredRow(task.Id, false)">
                     <td>@task.State</td>
                     <td>@task.CreatedAt</td>
-                    <td>@task.WorkersGroups</td>
-                    <td>@task.FinishDate?.ToShortDateString()</td>
+                    <td>@string.Join(", ", task.WorkersGroups.Select(e => e.Specialization))</td>
+                    <td>@task.FinishDate</td>
                 </tr>
             }
         </tbody>
     </table>
 
-    <button class="btn" @onclick="GiveTask">Give Task</button>
+    <button class="btn" @onclick="GiveTask" disabled="@IsGiveTaskButtonDisabled()">Give Task</button>
+
 }
 else
 {
@@ -63,22 +67,89 @@ else
         border-radius: 4px;
         cursor: pointer;
     }
+
+    .selected-row {
+        background-color: cornflowerblue;
+    }
+
+    .hovered-row {
+        background-color: #f0f0f0;
+    }
+
 </style>
 
 @code {
     public List<Data.Models.Task> tasks { get; set; }
+    public Data.Models.Task selectedTask { get; set; }
+    public string hoveredRowId { get; set; }
+    public WorkersGroup workersGroup { get; set; }
+    DialogOptions optionsForError = new DialogOptions() { MaxWidth = MaxWidth.Medium, Position = DialogPosition.Center};
+    DialogOptions optionsForSucces = new DialogOptions() {Position = DialogPosition.Center };
+
     [Parameter]
     public string GroupId { get; set; }
 
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
-        tasks = await TaskService.GetTasks(GroupId);
+        await TaskService.UpdateStateOfAllTask();
+        tasks = await TaskService.GetTasksByGroup(GroupId);
+        tasks = tasks.OrderBy(e => e.FinishDate).ToList();
+        workersGroup = await GroupService.GetGroups(GroupId);
+    }
+
+    private void SelectTask(Data.Models.Task task)
+    {
+        if (selectedTask == task)
+            selectedTask = null;
+        else
+            selectedTask = task;
+    }
+
+    private bool IsGiveTaskButtonDisabled()
+    {
+        return selectedTask == null;
+    }
+
+    private string GetRowStyle(string taskId)
+    {
+        if (selectedTask != null && taskId == selectedTask.Id)
+            return "background-color: cornflowerblue;";
+        if (taskId == hoveredRowId)
+            return "background-color: #f0f0f0;";
+        return string.Empty;
+    }
+
+    private string GetRowClass(Data.Models.Task task)
+    {
+        return task == selectedTask ? "selected-row" : string.Empty;
+    }
+
+    private void SetHoveredRow(string taskId, bool isHovered)
+    {
+        if (isHovered)
+        {
+            hoveredRowId = taskId;
+        }
+        else
+        {
+            hoveredRowId = null;
+        }
     }
 
     private void GiveTask()
     {
-        // TODO: Implement the logic to give a task
-        // You can navigate to a new page or show a modal dialog to give a task to someone.
-        // This method will be called when the "Give Task" button is clicked.
+        var specializations = selectedTask.WorkersGroups.Select(e => e.Specialization).ToList();
+        if (specializations.Contains(workersGroup.Specialization))
+        {
+            var parameters = new DialogParameters();
+            parameters.Add("TaskId", selectedTask.Id);
+            DialogService.Show<OptionDialog>("There already is team with this specialization responsible for this task", parameters, optionsForError);
+        }
+        else
+        {
+            // addtask to group
+            DialogService.Show<SuccesDialog>("Succesfuly added task for this team", optionsForSucces);
+        }
     }
+
 }

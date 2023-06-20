@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using blazor_19c.Data.Models;
 
@@ -11,9 +12,11 @@ using blazor_19c.Data.Models;
 namespace blazor_19c.Migrations
 {
     [DbContext(typeof(SawmillGruszkaDBContext))]
-    partial class SawmillGruszkaDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230619120321_Changing Groups")]
+    partial class ChangingGroups
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

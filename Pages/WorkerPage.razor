@@ -1,0 +1,146 @@
+@page "/workersList/{TaskId}"
+@inject IWorkerService WorkerService
+@inject ITaskService TaskService
+@inject IGroupService GroupService
+@inject IDialogService DialogService
+
+<PageTitle>Workers</PageTitle>
+
+<h3>Select Workers And Specialization For This Task</h3>
+
+@if (sawmillWorkers != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Age</th>
+                <th>Pesel</th>
+                <th>Seniority</th>
+                <th>Salary</th>
+                <th>Add</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var worker in sawmillWorkers)
+            {
+                <tr>
+                    <td>@worker.FirstName</td>
+                    <td>@worker.LastName</td>
+                    <td>@worker.getAge()</td>
+                    <td>@worker.Pesel</td>
+                    <td>@worker.Seniority</td>
+                    <td>@worker.Salary</td>
+                    <td><input type="checkbox" @onclick="() => ToggleWorkerSelection(worker)" /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    
+    <div class="specialization-input">
+        <label for="teamSpecialization">Team Specialization:</label>
+        <input type="text" id="teamSpecialization" @bind="@teamSpecialization" class="specialization-textbox" />
+    </div>
+
+    <button class="btn" @onclick="GiveTask" disabled="@IsGiveTaskButtonDisabled()">Give Task</button>
+}
+else
+{
+    <p>Loading workers...</p>
+}
+
+<style>
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .specialization-textbox {
+        background-color: #f2f2f2;
+    }
+    
+    th {
+        background-color: #f2f2f2;
+    }
+    
+    tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+    
+    .specialization-input {
+        margin-top: 20px;
+    }
+    
+    .specialization-input label {
+        display: block;
+        margin-bottom: 5px;
+    }
+    
+    .btn {
+        margin-top: 10px;
+        padding: 8px 16px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: not-allowed;
+    }
+</style>
+
+@code {
+    public List<SawmillWorker> sawmillWorkers { get; set; }
+    public List<WorkersGroup> workersGroups { get; set; }
+    public string teamSpecialization { get; set; }
+    public List<SawmillWorker> selectedWorkers { get; set; } = new List<SawmillWorker>();
+    DialogOptions optionsForSucces = new DialogOptions() { Position = DialogPosition.Center };
+    public Data.Models.Task task { get; set; }
+
+    [Parameter]
+    public string TaskId { get; set; }
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        workersGroups = await GroupService.GetGroups();
+        task = await TaskService.GetTasks(TaskId);
+        sawmillWorkers = await WorkerService.GetWorkers();
+        sawmillWorkers =  sawmillWorkers.OrderBy(e => e.FirstName).ToList();
+
+    }
+    private bool IsGiveTaskButtonDisabled()
+    {
+        return selectedWorkers.Count() < 3;
+    }
+    private void ToggleWorkerSelection(SawmillWorker worker)
+    {
+        if (selectedWorkers.Contains(worker))
+        {
+            selectedWorkers.Remove(worker);
+        }
+        else
+        {
+            selectedWorkers.Add(worker);
+        }
+    }
+    private void GiveTask()
+    {
+        var taskSpecializations = task.WorkersGroups.Select(e => e.Specialization).ToList();
+        if (taskSpecializations.Contains(teamSpecialization))
+        {
+            DialogService.Show<ErrorDialog>("There already is team with this specialization responsible for this task", optionsForSucces);
+        } 
+        else if (workersGroups.Any(e => e.Specialization == teamSpecialization))
+        {
+            
+        }
+        else {
+            DialogService.Show<SuccesDialog>("Succesfuly added task for this team", optionsForSucces);
+        }
+    }
+}

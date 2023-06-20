@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "lknb4dplyefee0cZPVt7vLIpxsMCCbKv4qduCArlT6U=",
+  "Hash": "b8sc/wugllgY2EYQlSxkzJVBN6JaJ7j/r67egt7hQpo=",
   "Source": "blazor-19c",
   "BasePath": "_content/blazor-19c",
   "Mode": "Default",
@@ -16,6 +16,40 @@
     }
   ],
   "Assets": [
+    {
+      "Identity": "C:\\Users\\Franek\\.nuget\\packages\\mudblazor\\6.4.1\\staticwebassets\\MudBlazor.min.css",
+      "SourceId": "MudBlazor",
+      "SourceType": "Package",
+      "ContentRoot": "C:\\Users\\Franek\\.nuget\\packages\\mudblazor\\6.4.1\\staticwebassets\\",
+      "BasePath": "_content/MudBlazor",
+      "RelativePath": "MudBlazor.min.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\Users\\Franek\\.nuget\\packages\\mudblazor\\6.4.1\\staticwebassets\\MudBlazor.min.css"
+    },
+    {
+      "Identity": "C:\\Users\\Franek\\.nuget\\packages\\mudblazor\\6.4.1\\staticwebassets\\MudBlazor.min.js",
+      "SourceId": "MudBlazor",
+      "SourceType": "Package",
+      "ContentRoot": "C:\\Users\\Franek\\.nuget\\packages\\mudblazor\\6.4.1\\staticwebassets\\",
+      "BasePath": "_content/MudBlazor",
+      "RelativePath": "MudBlazor.min.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\Users\\Franek\\.nuget\\packages\\mudblazor\\6.4.1\\staticwebassets\\MudBlazor.min.js"
+    },
     {
       "Identity": "C:\\Users\\Franek\\Desktop\\blazor-19c\\obj\\Debug\\net6.0\\scopedcss\\bundle\\blazor-19c.styles.css",
       "SourceId": "blazor-19c",
