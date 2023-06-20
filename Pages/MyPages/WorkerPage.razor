@@ -50,49 +50,8 @@ else
     <p>Loading workers...</p>
 }
 
-<style>
-    .table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    
-    th, td {
-        padding: 8px;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
-    }
-
-    .specialization-textbox {
-        background-color: #f2f2f2;
-    }
-    
-    th {
-        background-color: #f2f2f2;
-    }
-    
-    tbody tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-    
-    .specialization-input {
-        margin-top: 20px;
-    }
-    
-    .specialization-input label {
-        display: block;
-        margin-bottom: 5px;
-    }
-    
-    .btn {
-        margin-top: 10px;
-        padding: 8px 16px;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        cursor: not-allowed;
-    }
-</style>
+<!-- _Imports.razor -->
+<link rel="stylesheet" href="styles.css" />
 
 @code {
     public List<SawmillWorker> sawmillWorkers { get; set; }
@@ -115,7 +74,8 @@ else
     }
     private bool IsGiveTaskButtonDisabled()
     {
-        return selectedWorkers.Count() < 3;
+        if (teamSpecialization == null) return true;
+        return selectedWorkers.Count() < 3 || teamSpecialization.Length == 0;
     }
     private void ToggleWorkerSelection(SawmillWorker worker)
     {
@@ -128,7 +88,7 @@ else
             selectedWorkers.Add(worker);
         }
     }
-    private void GiveTask()
+    private async void GiveTask()
     {
         var taskSpecializations = task.WorkersGroups.Select(e => e.Specialization).ToList();
         if (taskSpecializations.Contains(teamSpecialization))
@@ -137,9 +97,34 @@ else
         } 
         else if (workersGroups.Any(e => e.Specialization == teamSpecialization))
         {
-            
+            var existingGroups = workersGroups.Where(e => e.Specialization == teamSpecialization).ToList();
+
+            bool isSameMembers = false;
+
+            foreach (var existingGroup in existingGroups)
+            {
+                var existingGroupMembers = existingGroup.SawmillWorkers.ToList();
+                List<String> list1 = existingGroupMembers.OrderBy(e => e.Id).Select(e => e.Id).ToList();
+                List<String> list2 = selectedWorkers.OrderBy(e => e.Id).Select(e => e.Id).ToList();
+                if (list1.SequenceEqual(list2))
+                {
+                    isSameMembers = true;
+                    break;
+                }
+            }
+            if (isSameMembers)
+            {
+                DialogService.Show<ErrorDialog>("There is already a team with the same specialization and members for this task", optionsForSucces);
+            }
+            else
+            {
+                var group = await GroupService.AddGroup(teamSpecialization, selectedWorkers);
+                await GroupService.ConnectGroupToTask(task.Id,group);
+                DialogService.Show<SuccesDialog>("Succesfuly added task for this team", optionsForSucces);
+            }
         }
         else {
+            ///add new group and connect with task
             DialogService.Show<SuccesDialog>("Succesfuly added task for this team", optionsForSucces);
         }
     }

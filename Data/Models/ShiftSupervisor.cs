@@ -12,6 +12,6 @@
         /// <summary>
         /// Email address of the shift supervisor
         /// </summary>
-        public virtual IEnumerable<TaskReport> TaskReports { get; set; }
+        public virtual ICollection<TaskReport> TaskReports { get; set; }
     }
 }

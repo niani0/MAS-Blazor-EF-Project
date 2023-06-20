@@ -1,0 +1,199 @@
+@page "/taskList/{GroupId}"
+@inject ITaskService TaskService
+@inject IGroupService GroupService
+@inject IDialogService DialogService
+
+<PageTitle>Tasks</PageTitle>
+
+@if (tasks != null)
+{
+    <h3>List Of Available Tasks For Team With Specialization: @workersGroup.Specialization</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th @onclick="SortByState">State</th>
+                <th @onclick="SortByCreationDate">Creation Date</th>
+                <th @onclick="SortBySpecializations">Specializations Of Groups Working On The Task</th>
+                <th @onclick="SortByDueDate">Due Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var task in tasks)
+            {
+                <tr @onclick="() => SelectTask(task)" class="@GetRowClass(task)" style="@GetRowStyle(task.Id)" @onmouseover="() => SetHoveredRow(task.Id, true)" @onmouseout="() => SetHoveredRow(task.Id, false)">
+                    <td>@task.State</td>
+                    <td>@task.CreatedAt</td>
+                    <td>@string.Join(", ", task.WorkersGroups.Select(e => e.Specialization))</td>
+                    <td>@task.FinishDate</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button class="btn" @onclick="GiveTask" disabled="@IsGiveTaskButtonDisabled()">Give Task</button>
+}
+else
+{
+    <p>Loading tasks...</p>
+}
+
+<!-- _Imports.razor -->
+<link rel="stylesheet" href="styles.css" />
+
+@code {
+    public List<Data.Models.Task> tasks { get; set; }
+    public Data.Models.Task selectedTask { get; set; }
+    public string hoveredRowId { get; set; }
+    public WorkersGroup workersGroup { get; set; }
+    DialogOptions optionsForError = new DialogOptions() { MaxWidth = MaxWidth.Medium, Position = DialogPosition.Center };
+    DialogOptions optionsForSuccess = new DialogOptions() { Position = DialogPosition.Center };
+
+    [Parameter]
+    public string GroupId { get; set; }
+    public string SortColumn { get; set; }
+    public bool IsAscending { get; set; } = true;
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        await TaskService.UpdateStateOfAllTask();
+        tasks = await TaskService.GetTasksByGroup(GroupId);
+        SortByDueDate();
+        workersGroup = await GroupService.GetGroups(GroupId);
+    }
+
+    private void SelectTask(Data.Models.Task task)
+    {
+        if (selectedTask == task)
+            selectedTask = null;
+        else
+            selectedTask = task;
+    }
+
+    private bool IsGiveTaskButtonDisabled()
+    {
+        return selectedTask == null;
+    }
+
+    private string GetRowStyle(string taskId)
+    {
+        if (selectedTask != null && taskId == selectedTask.Id)
+            return "background-color: cornflowerblue;";
+        if (taskId == hoveredRowId)
+            return "background-color: #f0f0f0;";
+        return string.Empty;
+    }
+
+    private string GetRowClass(Data.Models.Task task)
+    {
+        return task == selectedTask ? "selected-row" : string.Empty;
+    }
+
+    private void SetHoveredRow(string taskId, bool isHovered)
+    {
+        hoveredRowId = isHovered ? taskId : null;
+    }
+
+    private void GiveTask()
+    {
+        var specializations = selectedTask.WorkersGroups.Select(e => e.Specialization).ToList();
+        if (specializations.Contains(workersGroup.Specialization))
+        {
+            var parameters = new DialogParameters();
+            parameters.Add("TaskId", selectedTask.Id);
+            DialogService.Show<OptionDialog>("There already is a team with this specialization responsible for this task", parameters, optionsForError);
+        }
+        else
+        {
+            TaskService.GiveTaskToGroup(selectedTask.Id, workersGroup.Id);
+            DialogService.Show<SuccesDialog>("Successfully added task for this team", optionsForSuccess);
+        }
+    }
+
+    private void SortByState()
+    {
+        if (SortColumn == "State")
+        {
+            IsAscending = !IsAscending;
+        }
+        else
+        {
+            SortColumn = "State";
+            IsAscending = true;
+        }
+
+        if (IsAscending)
+        {
+            tasks = tasks.OrderBy(e => e.State).ToList();
+        }
+        else
+        {
+            tasks = tasks.OrderByDescending(e => e.State).ToList();
+        }
+    }
+
+    private void SortByCreationDate()
+    {
+        if (SortColumn == "CreationDate")
+        {
+            IsAscending = !IsAscending;
+        }
+        else
+        {
+            SortColumn = "CreationDate";
+            IsAscending = true;
+        }
+
+        if (IsAscending)
+        {
+            tasks = tasks.OrderBy(e => e.CreatedAt).ToList();
+        }
+        else
+        {
+            tasks = tasks.OrderByDescending(e => e.CreatedAt).ToList();
+        }
+    }
+
+    private void SortBySpecializations()
+    {
+        if (SortColumn == "Specializations")
+        {
+            IsAscending = !IsAscending;
+        }
+        else
+        {
+            SortColumn = "Specializations";
+            IsAscending = true;
+        }
+
+        if (IsAscending)
+        {
+            tasks = tasks.OrderBy(e => string.Join(", ", e.WorkersGroups.Select(g => g.Specialization))).ToList();
+        }
+        else
+        {
+            tasks = tasks.OrderByDescending(e => string.Join(", ", e.WorkersGroups.Select(g => g.Specialization))).ToList();
+        }
+    }
+
+    private void SortByDueDate()
+    {
+        if (SortColumn == "DueDate")
+        {
+            IsAscending = !IsAscending;
+        }
+        else
+        {
+            SortColumn = "DueDate";
+            IsAscending = true;
+        }
+
+        if (IsAscending)
+        {
+            tasks = tasks.OrderBy(e => e.FinishDate).ToList();
+        }
+        else
+        {
+            tasks = tasks.OrderByDescending(e => e.FinishDate).ToList();
+        }
+    }
+}

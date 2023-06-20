@@ -29,19 +29,19 @@ namespace blazor_19c.Data.Models
         /// <summary>
         /// Materials needed for the task
         /// </summary>
-        public virtual IEnumerable<Material> Materials { get; set; }
+        public virtual ICollection<Material> Materials { get; set; }
         /// <summary>
         /// Reports of the task
         /// </summary>
-        public virtual IEnumerable<TaskReport> Reports { get; set; }
+        public virtual ICollection<TaskReport> Reports { get; set; }
         /// <summary>
         /// Work done on the order
         /// </summary>
-        public virtual IEnumerable<WorkOnOrder> WorkOnOrders { get; set; }
+        public virtual ICollection<WorkOnOrder> WorkOnOrders { get; set; }
         /// <summary>
         /// Workers groups
         /// </summary>
-        public virtual IEnumerable<WorkersGroup> WorkersGroups { get; set; }
+        public virtual ICollection<WorkersGroup> WorkersGroups { get; set; }
         public Task()
         {
             Id = Guid.NewGuid().ToString();

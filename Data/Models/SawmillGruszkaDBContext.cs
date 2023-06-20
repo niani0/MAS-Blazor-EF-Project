@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace blazor_19c.Data.Models
 {
+    /// <summary>
+    /// Represents the database context for the Sawmill Gruszka application.
+    /// </summary>
     public class SawmillGruszkaDBContext : DbContext
     {
         public DbSet<Person> Person { get; set; }
@@ -12,8 +15,14 @@ namespace blazor_19c.Data.Models
         {
 
         }
+        /// <summary>
+        /// Configures the database model and relationships between entities.
+        /// </summary>
+        /// <param name="modelBuilder">The model builder instance used to configure the model.</param>
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Configure relationships between entities
 
             modelBuilder.Entity<Material>().HasMany(e => e.MaterialsDeliveries).WithMany(e => e.Materials);
             modelBuilder.Entity<Material>().HasMany(e => e.Tasks).WithMany(e => e.Materials);
@@ -24,6 +33,8 @@ namespace blazor_19c.Data.Models
             modelBuilder.Entity<WorkersGroup>().HasMany(e => e.SawmillWorkers).WithMany(e => e.WorkersGroups);
             modelBuilder.Entity<WorkersGroup>().HasMany(e => e.Tasks).WithMany(e => e.WorkersGroups);
             modelBuilder.Entity<ShiftSupervisor>().HasMany(e => e.TaskReports).WithOne(e => e.ShiftSupervisor);
+
+            // Seed initial data
 
             var sawmillWorkers = new List<SawmillWorker>
 {
@@ -189,9 +200,11 @@ namespace blazor_19c.Data.Models
             modelBuilder.Entity<WorkersGroup>().HasData(workersGroups);
 
 
-
             modelBuilder.Entity<Person>()
                 .HasDiscriminator<string>("PersonType");
+
+            modelBuilder.Entity<Material>()
+                .HasIndex(u => u.Name).IsUnique();
         }
     }
 }

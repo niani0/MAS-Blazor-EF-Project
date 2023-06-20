@@ -16,7 +16,7 @@
         /// <summary>
         /// List of workers groups
         /// </summary>
-        public virtual IEnumerable<WorkersGroup> WorkersGroups { get; set; }
+        public virtual ICollection<WorkersGroup> WorkersGroups { get; set; }
 
         public override string ToString()
         {

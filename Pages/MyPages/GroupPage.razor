@@ -1,0 +1,117 @@
+﻿@page "/GroupList"
+@inject IGroupService GroupService
+@inject NavigationManager NavigationManager
+<PageTitle>Groups</PageTitle>
+
+<h3>Pick Group You Want To Give Task</h3>
+
+@if (Groups != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th @onclick="SortBySpecialization">Specialization</th>
+                <th @onclick="SortByGroupMembers">Group Members</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var group in Groups)
+            {
+                <tr @onclick="() => GoToTaskList(group.Id)" @onmouseover="() => SetHoveredRow(group.Id, true)" @onmouseout="() => SetHoveredRow(group.Id, false)" style="@GetRowStyle(group.Id)">
+                    <td>@group.Specialization</td>
+                    <td>@string.Join(", ", group.SawmillWorkers.Select(e => $"{e.FirstName} {e.LastName}"))</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Loading Groups...</p>
+}
+
+<!-- _Imports.razor -->
+<link rel="stylesheet" href="styles.css" />
+
+@code {
+    public List<WorkersGroup>? Groups { get; set; }
+    public string? HoveredRowId { get; set; }
+    public string? SortColumn { get; set; }
+    public bool IsAscending { get; set; } = true;
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        Groups = await GroupService.GetGroups();
+        SortBySpecialization();
+    }
+
+    private void GoToTaskList(string groupId)
+    {
+        NavigationManager.NavigateTo($"/taskList/{groupId}");
+    }
+
+    private void SetHoveredRow(string groupId, bool isHovered)
+    {
+        if (isHovered)
+        {
+            HoveredRowId = groupId;
+        }
+        else if (HoveredRowId == groupId)
+        {
+            HoveredRowId = "";
+        }
+    }
+
+    private string GetRowStyle(string groupId)
+    {
+        if (groupId == HoveredRowId)
+        {
+            return "background-color: #f0f0f0;";
+        }
+        return string.Empty;
+    }
+
+    private void SortBySpecialization()
+    {
+        if (SortColumn == "Specialization")
+        {
+            IsAscending = !IsAscending;
+        }
+        else
+        {
+            SortColumn = "Specialization";
+            IsAscending = true;
+        }
+
+        if (IsAscending)
+        {
+            Groups = Groups.OrderBy(e => e.Specialization).ToList();
+        }
+        else
+        {
+            Groups = Groups.OrderByDescending(e => e.Specialization).ToList();
+        }
+    }
+
+    private void SortByGroupMembers()
+    {
+        if (SortColumn == "GroupMembers")
+        {
+            IsAscending = !IsAscending;
+        }
+        else
+        {
+            SortColumn = "GroupMembers";
+            IsAscending = true;
+        }
+
+        if (IsAscending)
+        {
+            Groups = Groups.OrderBy(e => e.SawmillWorkers.Count()).ToList();
+        }
+        else
+        {
+            Groups = Groups.OrderByDescending(e => e.SawmillWorkers.Count()).ToList();
+        }
+    }
+}
