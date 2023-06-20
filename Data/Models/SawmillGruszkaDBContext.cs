@@ -159,11 +159,11 @@ namespace blazor_19c.Data.Models
             {
                 new WorkersGroup
                 {
-                    Specialization = "Sawing",
+                    Specialization = "Wood",
                 },
                 new WorkersGroup
                 {
-                    Specialization = "Drying",
+                    Specialization = "Wood",
                 },
                 new WorkersGroup
                 {

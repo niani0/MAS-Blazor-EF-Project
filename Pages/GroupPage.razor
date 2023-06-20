@@ -1,6 +1,7 @@
 ﻿@page "/GroupList"
 @inject IGroupService GroupService
 @inject NavigationManager NavigationManager
+<PageTitle>Groups</PageTitle>
 
 <h3>List of Groups</h3>
 
@@ -71,6 +72,7 @@ else
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
         Groups = await GroupService.GetGroups();
+        Groups = Groups.OrderBy(e => e.SawmillWorkers.Count()).OrderBy(e => e.Specialization).ToList();
     }
 
     private void GoToTaskList(String groupId)

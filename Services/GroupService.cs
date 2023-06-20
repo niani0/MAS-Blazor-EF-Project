@@ -15,5 +15,10 @@ namespace blazor_19c.Services
         {
             return await _context.WorkersGroup.Include(e => e.SawmillWorkers).ToListAsync();
         }
+
+        public async Task<WorkersGroup> GetGroups(string GroupID)
+        {
+            return await _context.WorkersGroup.Include(e => e.SawmillWorkers).FirstOrDefaultAsync(e => e.Id == GroupID);
+        }
     }
 }
