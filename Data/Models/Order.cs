@@ -38,7 +38,7 @@ namespace blazor_19c.Data.Models
         /// <summary>
         /// List of work on orders
         /// </summary>
-        public virtual IEnumerable<WorkOnOrder> WorkOnOrders { get; set; }
+        public virtual ICollection<WorkOnOrder> WorkOnOrders { get; set; }
         public Order()
         {
             Id = Guid.NewGuid().ToString();

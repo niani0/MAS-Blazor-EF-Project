@@ -21,7 +21,7 @@ namespace blazor_19c.Data.Models
         /// <summary>
         /// Sawmill workers
         /// </summary>
-        public virtual IEnumerable<SawmillWorker> SawmillWorkers { get; set; }
+        public virtual ICollection<SawmillWorker> SawmillWorkers { get; set; }
         /// <summary>
         /// Tasks of the group
         /// </summary>

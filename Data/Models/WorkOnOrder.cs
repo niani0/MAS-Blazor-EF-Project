@@ -25,7 +25,7 @@ namespace blazor_19c.Data.Models
         /// <summary>
         /// List of tasks
         /// </summary>
-        public virtual IEnumerable<Task> Tasks { get; set; }
+        public virtual ICollection<Task> Tasks { get; set; }
         /// <summary>
         /// Order
         /// </summary>

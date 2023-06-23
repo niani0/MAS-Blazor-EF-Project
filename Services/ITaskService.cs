@@ -8,5 +8,9 @@ namespace blazor_19c.Services
         public Task<List<Data.Models.Task>> GetTasksByGroup(string GroupId);
         public Task<Data.Models.Task> GetTasks(string TaskID);
         public Task<List<Data.Models.Task>> UpdateStateOfAllTask();
+<<<<<<< HEAD
+=======
+        public Task<bool> GiveTaskToGroup(string TaskId, string GroupId);
+>>>>>>> feature-branch
     }
 }

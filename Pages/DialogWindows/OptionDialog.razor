@@ -1,0 +1,25 @@
+﻿@inject NavigationManager NavigationManager
+<MudDialog>
+    <DialogContent>
+        <div class="d-flex flex-column py-1">
+            <MudButton OnClick="SelectAgain">Select DIfferent Task</MudButton>
+            <MudButton OnClick="CreateNew">Create New Team For Selected Task</MudButton>
+        </div>
+    </DialogContent>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public string TaskId { get; set; }
+
+    void Close() => MudDialog.Close(DialogResult.Ok(true));
+
+    void SelectAgain()
+    {
+        Close();
+    }
+
+    void CreateNew()
+    {
+        NavigationManager.NavigateTo($"/workersList/{TaskId}");
+    }
+}
