@@ -1,6 +1,6 @@
 ﻿namespace blazor_19c.Data.Models
 {
-    internal enum TaskState
+    public enum TaskState
     {
         New,
         InQueue,

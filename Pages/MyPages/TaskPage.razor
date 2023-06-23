@@ -2,6 +2,8 @@
 @inject ITaskService TaskService
 @inject IGroupService GroupService
 @inject IDialogService DialogService
+<!-- _Imports.razor -->
+<link rel="stylesheet" href="styles.css" />
 
 <PageTitle>Tasks</PageTitle>
 
@@ -37,8 +39,6 @@ else
     <p>Loading tasks...</p>
 }
 
-<!-- _Imports.razor -->
-<link rel="stylesheet" href="styles.css" />
 
 @code {
     public List<Data.Models.Task> tasks { get; set; }

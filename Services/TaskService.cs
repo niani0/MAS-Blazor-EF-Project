@@ -56,11 +56,11 @@ namespace blazor_19c.Services
             {
                 if (task.WorkersGroups.Any())
                 {
-                    task.State = TaskState.InProgress.ToString();
+                    task.State = TaskState.InProgress;
                 }
                 else if (task.FinishDate < DateTime.Now)
                 {
-                    task.State = TaskState.Finished.ToString();
+                    task.State = TaskState.Finished;
                 }
             }
 

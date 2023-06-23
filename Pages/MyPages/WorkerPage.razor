@@ -4,6 +4,9 @@
 @inject IGroupService GroupService
 @inject IDialogService DialogService
 
+<!-- _Imports.razor -->
+<link rel="stylesheet" href="styles.css" />
+
 <PageTitle>Workers</PageTitle>
 
 <h3>Select Workers And Specialization For This Task</h3>
@@ -13,19 +16,19 @@
     <table class="table">
         <thead>
             <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Age</th>
-                <th>Pesel</th>
-                <th>Seniority</th>
-                <th>Salary</th>
+                <th @onclick="() => SortByColumn(nameof(SawmillWorker.FirstName))">First Name</th>
+                <th @onclick="() => SortByColumn(nameof(SawmillWorker.LastName))">Last Name</th>
+                <th @onclick="() => SortByColumn(nameof(SawmillWorker.Birthdate))">Age</th>
+                <th @onclick="() => SortByColumn(nameof(SawmillWorker.Pesel))">Pesel</th>
+                <th @onclick="() => SortByColumn(nameof(SawmillWorker.Seniority))">Seniority</th>
+                <th @onclick="() => SortByColumn(nameof(SawmillWorker.Salary))">Salary</th>
                 <th>Add</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var worker in sawmillWorkers)
             {
-                <tr>
+                <tr @onmouseover="() => SetHoveredRow(worker.Id, true)" @onmouseout="() => SetHoveredRow(worker.Id, false)">
                     <td>@worker.FirstName</td>
                     <td>@worker.LastName</td>
                     <td>@worker.getAge()</td>
@@ -37,10 +40,10 @@
             }
         </tbody>
     </table>
-    
+
     <div class="specialization-input">
         <label for="teamSpecialization">Team Specialization:</label>
-        <input type="text" id="teamSpecialization" @bind="@teamSpecialization" class="specialization-textbox" />
+        <input type="text" id="teamSpecialization" placeholder="ex. Planing" @bind="@teamSpecialization" class="specialization-textbox" />
     </div>
 
     <button class="btn" @onclick="GiveTask" disabled="@IsGiveTaskButtonDisabled()">Give Task</button>
@@ -50,16 +53,16 @@ else
     <p>Loading workers...</p>
 }
 
-<!-- _Imports.razor -->
-<link rel="stylesheet" href="styles.css" />
-
 @code {
     public List<SawmillWorker> sawmillWorkers { get; set; }
     public List<WorkersGroup> workersGroups { get; set; }
     public string teamSpecialization { get; set; }
     public List<SawmillWorker> selectedWorkers { get; set; } = new List<SawmillWorker>();
-    DialogOptions optionsForSucces = new DialogOptions() { Position = DialogPosition.Center };
+    DialogOptions optionsForSuccess = new DialogOptions() { Position = DialogPosition.Center };
     public Data.Models.Task task { get; set; }
+    public string sortColumn { get; set; }
+    public bool sortAscending { get; set; } = true;
+    public string hoveredRowId { get; set; }
 
     [Parameter]
     public string TaskId { get; set; }
@@ -69,14 +72,14 @@ else
         workersGroups = await GroupService.GetGroups();
         task = await TaskService.GetTasks(TaskId);
         sawmillWorkers = await WorkerService.GetWorkers();
-        sawmillWorkers =  sawmillWorkers.OrderBy(e => e.FirstName).ToList();
-
+        sawmillWorkers = sawmillWorkers.OrderBy(e => e.FirstName).ToList();
     }
+
     private bool IsGiveTaskButtonDisabled()
     {
-        if (teamSpecialization == null) return true;
-        return selectedWorkers.Count() < 3 || teamSpecialization.Length == 0;
+        return string.IsNullOrEmpty(teamSpecialization) || selectedWorkers.Count() < 3 || string.IsNullOrEmpty(teamSpecialization.Trim());
     }
+
     private void ToggleWorkerSelection(SawmillWorker worker)
     {
         if (selectedWorkers.Contains(worker))
@@ -88,13 +91,14 @@ else
             selectedWorkers.Add(worker);
         }
     }
-    private async void GiveTask()
+
+    private async System.Threading.Tasks.Task GiveTask()
     {
         var taskSpecializations = task.WorkersGroups.Select(e => e.Specialization).ToList();
         if (taskSpecializations.Contains(teamSpecialization))
         {
-            DialogService.Show<ErrorDialog>("There already is team with this specialization responsible for this task", optionsForSucces);
-        } 
+            DialogService.Show<ErrorDialog>("There already is a team with this specialization responsible for this task", optionsForSuccess);
+        }
         else if (workersGroups.Any(e => e.Specialization == teamSpecialization))
         {
             var existingGroups = workersGroups.Where(e => e.Specialization == teamSpecialization).ToList();
@@ -114,18 +118,62 @@ else
             }
             if (isSameMembers)
             {
-                DialogService.Show<ErrorDialog>("There is already a team with the same specialization and members for this task", optionsForSucces);
+                DialogService.Show<ErrorDialog>("There is already a team with the same specialization and members for this task", optionsForSuccess);
             }
             else
             {
                 var group = await GroupService.AddGroup(teamSpecialization, selectedWorkers);
-                await GroupService.ConnectGroupToTask(task.Id,group);
-                DialogService.Show<SuccesDialog>("Succesfuly added task for this team", optionsForSucces);
+                await GroupService.ConnectGroupToTask(task.Id, group);
+                DialogService.Show<SuccesDialog>("Successfully added task for this team", optionsForSuccess);
             }
         }
-        else {
-            ///add new group and connect with task
-            DialogService.Show<SuccesDialog>("Succesfuly added task for this team", optionsForSucces);
+        else
+        {
+            var group = await GroupService.AddGroup(teamSpecialization, selectedWorkers);
+            await GroupService.ConnectGroupToTask(task.Id, group);
+            DialogService.Show<SuccesDialog>("Successfully added task for this team", optionsForSuccess);
+        }
+    }
+
+    private void SetHoveredRow(string workerId, bool isHovered)
+    {
+        hoveredRowId = isHovered ? workerId : null;
+    }
+
+    private void SortByColumn(string columnName)
+    {
+        if (sortColumn == columnName)
+        {
+            sortAscending = !sortAscending;
+        }
+        else
+        {
+            sortColumn = columnName;
+            sortAscending = true;
+        }
+
+        switch (columnName)
+        {
+            case nameof(SawmillWorker.FirstName):
+                sawmillWorkers = sortAscending ? sawmillWorkers.OrderBy(e => e.FirstName).ToList() : sawmillWorkers.OrderByDescending(e => e.FirstName).ToList();
+                break;
+            case nameof(SawmillWorker.LastName):
+                sawmillWorkers = sortAscending ? sawmillWorkers.OrderBy(e => e.LastName).ToList() : sawmillWorkers.OrderByDescending(e => e.LastName).ToList();
+                break;
+            case nameof(SawmillWorker.Birthdate):
+                sawmillWorkers = sortAscending ? sawmillWorkers.OrderBy(e => e.getAge()).ToList() : sawmillWorkers.OrderByDescending(e => e.getAge()).ToList();
+                break;
+            case nameof(SawmillWorker.Pesel):
+                sawmillWorkers = sortAscending ? sawmillWorkers.OrderBy(e => e.Pesel).ToList() : sawmillWorkers.OrderByDescending(e => e.Pesel).ToList();
+                break;
+            case nameof(SawmillWorker.Seniority):
+                sawmillWorkers = sortAscending ? sawmillWorkers.OrderBy(e => e.Seniority).ToList() : sawmillWorkers.OrderByDescending(e => e.Seniority).ToList();
+                break;
+            case nameof(SawmillWorker.Salary):
+                sawmillWorkers = sortAscending ? sawmillWorkers.OrderBy(e => e.Salary).ToList() : sawmillWorkers.OrderByDescending(e => e.Salary).ToList();
+                break;
+            default:
+                break;
         }
     }
 }

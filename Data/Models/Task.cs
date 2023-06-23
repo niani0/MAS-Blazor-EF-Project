@@ -17,7 +17,7 @@ namespace blazor_19c.Data.Models
         /// <summary>
         /// Current state of the task
         /// </summary>
-        public string State { get; set; }
+        public TaskState State { get; set; }
         /// <summary>
         /// Date of the task creation
         /// </summary>
